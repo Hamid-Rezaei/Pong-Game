@@ -24,12 +24,6 @@ void Regtangle::setJ(int j){
     this->j = j;
 }
 
-// void Regtangle::tick(int x_size, int y_size, int i, int j){
-//     setI(i);
-//     setJ(j);
-// }
-
-
 // Padlle constructor
 Paddle::Paddle(bool is_right): Regtangle(PADELE_WIDTH, PADDLE_HEIGHT, X_RIGHT_PADDLE, Y_RIGHT_PADDLE){
     this->is_right = is_right;
@@ -68,7 +62,7 @@ void Paddle::goDown(){
         j -= 1;
     }
 }
-
+    
 //Ball construnctor
 Ball::Ball(): Regtangle(BALL_WIDTH, BALL_HEIGHT, X_CENTER, Y_CENTER){
     initBall();
@@ -80,6 +74,18 @@ void Ball::initBall(){
     j = Y_CENTER;
     GameBoard[i][j] = 1;
     direction = right_up;
+}
+
+void Ball::correctPaddleLight(Paddle right_paddle, Paddle left_paddle){
+    int j_left = left_paddle.getJ();
+    GameBoard[left_paddle.getI()][j_left] = 1;
+    GameBoard[left_paddle.getI()][j_left+1] = 1;
+    GameBoard[left_paddle.getI()][j_left+2] = 1;
+
+    int j_right = right_paddle.getJ();
+    GameBoard[right_paddle.getI()][j_right] = 1;
+    GameBoard[right_paddle.getI()][j_right+1] = 1;
+    GameBoard[right_paddle.getI()][j_right+2] = 1;
 }
 
 bool Ball::goUpRight(){
@@ -131,5 +137,97 @@ bool Ball::goDownLeft(){
     }
     else {
         return false;
+    }
+}
+
+
+void Ball::moving(Paddle right_paddle, Paddle left_paddle){
+    switch (direction)
+    {
+    case left_up:{
+        int i_after = i - 1;
+        int j_after = j + 1;
+        if(i_after == left_paddle.getI() && j_after > left_paddle.getJ() && j_after <= left_paddle.getJ() + 3){
+            direction = right_up;
+            return;
+        }
+        if(i_after < left_paddle.getI()){
+            initBall();
+            correctPaddleLight(right_paddle, left_paddle);
+        }
+
+        if(goUpLeft()){
+            direction = left_up;
+        }
+        else{
+            direction = left_down;
+        }
+    }
+        break;
+    case left_down:{
+        int i_after = i - 1;
+        int j_after = j - 1;
+        if(i_after == left_paddle.getI() && j_after >= left_paddle.getJ() - 1 && j_after < left_paddle.getJ() + 2){
+            direction = right_down;
+            return;
+        }
+        if(i_after < left_paddle.getI()){
+            initBall();
+            correctPaddleLight(right_paddle, left_paddle);
+        }
+
+        if(goDownLeft()){
+            direction = left_down;
+        }
+        else{
+            direction = left_up;
+        }
+    }
+        break;    
+    case right_up:{
+        int i_after = i + 1;
+        int j_after = j + 1;
+        if(i_after == right_paddle.getI() && j_after > right_paddle.getJ() && j_after <= right_paddle.getJ() + 3){
+            direction = left_up;
+            return;
+        }
+        if(i_after > right_paddle.getI()){
+            initBall();
+            correctPaddleLight(right_paddle, left_paddle);
+        }
+
+        if(goUpRight()){
+            direction = right_up;
+        }
+        else{
+            direction = right_down;
+        }
+    }
+        break;
+
+    case right_down:{
+        int i_after = i + 1;
+        int j_after = j - 1;
+        if(i_after == right_paddle.getI() && j_after >= right_paddle.getJ() - 1 && j_after < right_paddle.getJ() + 2){
+            direction = left_down;
+            return;
+        }
+        if(i_after > right_paddle.getI()){
+            initBall();
+            correctPaddleLight(right_paddle, left_paddle);
+        }
+
+        if(goDownRight()){
+            direction = right_down;
+        }
+        else{
+            direction = right_up;
+        }
+    }
+        break;
+        
+    default:
+        direction = stay;
+        break;
     }
 }

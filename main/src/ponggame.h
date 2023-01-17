@@ -20,7 +20,7 @@
 #define Y_LEFT_PADDLE 2
 
 
-enum Direction {stay, left_up, left_right, right_up, right_left};
+enum Direction {stay, left_up, left_down, right_up, right_down};
 
 
 inline int GameBoard[BOARD_HEIGHT][BOARD_WIDTH];
@@ -29,8 +29,6 @@ class Regtangle{
     protected:
         int width, height;
         int i, j;
-
-        // virtual void tick(int width, int height, int i, int j);
 
     public:
         Regtangle(int width, int height, int i, int j);
@@ -54,7 +52,7 @@ class Paddle: public Regtangle{
     private:
         bool is_right;
     public:
-        Paddle(bool is_right); /*: Regtangle(PADELE_WIDTH, PADDLE_HEIGHT, X_RIGHT_PADDLE, Y_RIGHT_PADDLE);*/
+        Paddle(bool is_right);
         void initPaddle();
         void goUp();
         void goDown();
@@ -65,14 +63,15 @@ class Paddle: public Regtangle{
 class Ball: public Regtangle{
     private:
         Direction direction;
-
     public:
         Ball();
         void initBall();
+        void correctPaddleLight(Paddle right_paddle, Paddle left_paddle);
         bool goUpRight();
         bool goUpLeft();
         bool goDownRight();
         bool goDownLeft();
+        void moving(Paddle right_paddle, Paddle left_paddle);
 
 };
 

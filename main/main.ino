@@ -118,7 +118,13 @@ void tick(){
  }
 }
 
+int ball_speed = 50;
+int i = 0;
+
 void loop() {
   tick();
+  i++;
+  if(i % ball_speed == 0)
+    ball.moving(right_paddle, left_paddle);
 
 }
